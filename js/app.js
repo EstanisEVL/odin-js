@@ -16,7 +16,6 @@ const getComputerChoice = () => {
       choice = choices[2];
       break;
   }
-  console.log(choice);
   return choice;
 }
 
