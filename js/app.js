@@ -1,3 +1,12 @@
+const btn = document.querySelectorAll("button");
+const div = document.querySelector(".results");
+
+let resCounter = {
+  playerWins: 0,
+  computerWins: 0,
+  ties: 0
+};
+
 const getComputerChoice = () => {
   const choices = ["Rock", "Paper", "Scissors"];
 
@@ -19,74 +28,69 @@ const getComputerChoice = () => {
   return choice;
 }
 
-const playRound = (playerSelection, computerSelection) => {
+const displayWinner = (results) => {
+  let resultMessage = `Player wins: ${results.playerWins} | Computer wins: ${results.computerWins} | Ties: ${results.ties}`;
+  const resultP = document.createElement("p");
+
+  if((resCounter.playerWins === 5 || resCounter.computerWins === 5)) {
+    if(resCounter.playerWins + resCounter.computerWins > resCounter.ties) {
+      resultP.innerText = resCounter.playerWins > resCounter.computerWins ? "Player wins!" : "Computer wins!";
+      div.appendChild(resultP);
+    } else {
+      resultP.innerText = "Tied!";
+      div.appendChild(resultP);
+    }
+    resCounter.playerWins = 0;
+    resCounter.computerWins = 0;
+    resCounter.ties = 0;
+  } else {
+    resultP.innerText = resultMessage;
+    div.appendChild(resultP);
+  }
+}
+
+const playRound = (selection) => {
+  let playerSelection = "";
+
+  if(Number(selection) === 1) {
+    playerSelection = "Rock";
+  } else if (Number(selection) === 2) {
+    playerSelection = "Paper";
+  } else {
+    playerSelection = "Scissors"
+  }
+
+  const computerSelection = getComputerChoice();
+
   if(playerSelection.toLowerCase() === "rock" && computerSelection.toLowerCase() === "paper") {
-    const result = `You Lose! ${computerSelection} beats ${playerSelection}`
-    return result;
+    resCounter.computerWins += 1;
   } else if(playerSelection.toLowerCase() === "rock" && computerSelection.toLowerCase() === "rock") {
-    const result = `Tied! ${computerSelection} ties with ${playerSelection}`;
-    return result;
+    resCounter.ties += 1;
   } else if(playerSelection.toLowerCase() === "rock" && computerSelection.toLowerCase() === "scissors") {
-    const result = `You Win! ${playerSelection} beats ${computerSelection}`;
-    return result;
+    resCounter.playerWins += 1;
   }
 
   if(playerSelection.toLowerCase() === "paper" && computerSelection.toLowerCase() === "scissors") {
-    const result = `You Lose! ${computerSelection} beats ${playerSelection}`
-    return result;
+    resCounter.computerWins += 1;
   } else if(playerSelection.toLowerCase() === "paper" && computerSelection.toLowerCase() === "paper") {
-    const result = `Tied! ${computerSelection} ties with ${playerSelection}`;
-    return result;
+    resCounter.ties += 1;
   } else if(playerSelection.toLowerCase() === "paper" && computerSelection.toLowerCase() === "rock") {
-    const result = `You Win! ${playerSelection} beats ${computerSelection}`;
-    return result;
+    resCounter.playerWins += 1;
   }
 
   if(playerSelection.toLowerCase() === "scissors" && computerSelection.toLowerCase() === "rock") {
-    const result = `You Lose! ${computerSelection} beats ${playerSelection}`
-    return result;
+    resCounter.computerWins += 1;
   } else if(playerSelection.toLowerCase() === "scissors" && computerSelection.toLowerCase() === "scissors") {
-    const result = `Tied! ${computerSelection} ties with ${playerSelection}`;
-    return result;
+    resCounter.ties += 1;
   } else if(playerSelection.toLowerCase() === "scissors" && computerSelection.toLowerCase() === "paper") {
-    const result = `You Win! ${playerSelection} beats ${computerSelection}`;
-    return result;
+    resCounter.playerWins += 1;
   }
+
+  displayWinner(resCounter);
 }
 
-const game = (rounds) => {
-  let resCounter = {
-    playerWins: 0,
-    computerWins: 0,
-    ties: 0
-  };
-
-  for(let i = 1; i <= rounds; i++) {
-    
-    const playerSelection = prompt("Choose: Rock, Paper or Scissors.");
-    const computerSelection = getComputerChoice();
-
-    let result = playRound(playerSelection, computerSelection);
-
-    if(result === `You Win! ${playerSelection} beats ${computerSelection}`) {
-      resCounter.playerWins += 1;
-    } else if(result === `You Lose! ${computerSelection} beats ${playerSelection}`) {
-      resCounter.computerWins += 1;
-    } else {
-      resCounter.ties += 1;
-    }
-  }
-
-  const displayWinner = (results) => {
-    if(results.playerWins === results.computerWins || results.ties === rounds) {
-      return "Tie!";
-    } else {
-      return results.playerWins > results.computerWins ? "Player wins!" : "Computer wins!";
-    }
-  }
-
-  console.log(resCounter);
-  console.log(displayWinner(resCounter));
-}
-
-game(5);
+btn.forEach(button => {
+  button.addEventListener("click", (e) => {
+    playRound(e.target.id);
+  });
+})
